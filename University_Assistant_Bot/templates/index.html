@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniAssist Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <h1>UniAssist Bot</h1>
+        <p>Your friendly university assistant</p>
+      </header>
+
+      <main class="chat-panel">
+        <section id="chatMessages" class="chat-messages" aria-live="polite">
+          <div class="bubble bot">
+            Hi! I can help with courses, timetables, office hours, academic support, and campus
+            services.
+          </div>
+        </section>
+
+        <div id="typingIndicator" class="typing-indicator hidden">
+          <span></span><span></span><span></span> UniAssist is typing...
+        </div>
+
+        <div id="errorBox" class="error-box hidden" role="alert"></div>
+
+        <form id="chatForm" class="chat-input-row">
+          <input
+            type="text"
+            id="messageInput"
+            name="message"
+            maxlength="600"
+            placeholder="Ask a university question..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" id="sendButton">Send</button>
+        </form>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
