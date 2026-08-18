@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% from "macros.html" import brand %}
+{% block title %}Preferences{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="top-bar">{{ brand() }}</div>
+
+    <div class="section-header">
+        <div>
+            <h2>Your preferences</h2>
+            <p>UITM course recommendations based on your faculty and learning goals</p>
+        </div>
+    </div>
+
+    <div class="credit-banner">
+        <span class="material-symbols-outlined">info</span>
+        <div>
+            <strong>UITM semester credit limit: {{ max_semester_credits }} credit hours</strong>
+            <span>Enrollment is capped at {{ max_semester_credits }} hours per semester across all courses.</span>
+        </div>
+    </div>
+
+    <div class="rules-panel">
+        <h3>
+            <span class="material-symbols-outlined">psychology</span>
+            How rule-based filtering works
+        </h3>
+        <ol>
+            <li><strong>Faculty match</strong> — Only courses from your UITM faculty are recommended</li>
+            <li><strong>Difficulty range</strong> — Courses within your skill level (±1 stretch)</li>
+            <li><strong>Duration fit</strong> — Short (≤10 wks), Medium (11–14), Long (15+)</li>
+            <li><strong>Format preference</strong> — Online, In-Person, Hybrid, or Any</li>
+            <li><strong>Credit limit</strong> — Must fit within {{ max_semester_credits }}-hour semester budget</li>
+            <li><strong>Interest tags</strong> — Bonus scoring for matching keywords</li>
+            <li><strong>Student rating</strong> — Higher-rated courses get a quality boost</li>
+        </ol>
+    </div>
+
+    <form method="POST" action="{{ url_for('preferences') }}">
+        <div class="grid-2">
+            <div class="card">
+                <div class="form-group">
+                    <label for="faculty">
+                        <span class="material-symbols-outlined">account_balance</span>
+                        UITM faculty
+                    </label>
+                    <select id="faculty" name="faculty" class="form-control" required>
+                        {% for code in faculties %}
+                        <option value="{{ code }}" {% if prefs.faculty == code or prefs.field_of_study == code %}selected{% endif %}>
+                            {{ code }} — {{ uitm_faculties[code] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="difficulty_level">
+                        <span class="material-symbols-outlined">trending_up</span>
+                        Skill level
+                    </label>
+                    <select id="difficulty_level" name="difficulty_level" class="form-control" required>
+                        {% for level in ['Beginner', 'Intermediate', 'Advanced'] %}
+                        <option value="{{ level }}" {% if prefs.difficulty_level == level %}selected{% endif %}>{{ level }}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="form-hint">Includes your level and one step above as stretch goals.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration_preference">
+                        <span class="material-symbols-outlined">schedule</span>
+                        Preferred course length
+                    </label>
+                    <select id="duration_preference" name="duration_preference" class="form-control" required>
+                        {% for dur in ['Short', 'Medium', 'Long'] %}
+                        <option value="{{ dur }}" {% if prefs.duration_preference == dur %}selected{% endif %}>{{ dur }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label for="format_preference">
+                        <span class="material-symbols-outlined">devices</span>
+                        Delivery format
+                    </label>
+                    <select id="format_preference" name="format_preference" class="form-control" required>
+                        {% for fmt in ['Any', 'Online', 'In-Person', 'Hybrid'] %}
+                        <option value="{{ fmt }}" {% if prefs.format_preference == fmt %}selected{% endif %}>{{ fmt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="interests">
+                        <span class="material-symbols-outlined">label</span>
+                        Interest tags
+                    </label>
+                    <input type="text" id="interests" name="interests" class="form-control"
+                           value="{{ prefs.interests or '' }}"
+                           placeholder="e.g. programming, statistik, pemasaran">
+                    <p class="form-hint">Comma-separated keywords for bonus match scoring.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-gap mt-md">
+            <button type="submit" class="btn btn-gemini">
+                <span class="material-symbols-outlined">auto_awesome</span>
+                Save & get recommendations
+            </button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% macro brand() %}
+<div class="brand">
+    <div class="brand-icon">
+        <span class="material-symbols-outlined">auto_awesome</span>
+    </div>
+    <span class="brand-text">UITM <span class="brand-muted">CourseRec</span></span>
+</div>
+{% endmacro %}
+
+{% macro icon(name, class='') %}
+<span class="material-symbols-outlined {{ class }}">{{ name }}</span>
+{% endmacro %}

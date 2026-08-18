@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "macros.html" import brand %}
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<div class="page-wrapper no-dock">
+    <div class="top-bar">
+        {{ brand() }}
+        <div class="top-actions">
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Log in</a>
+            <a href="{{ url_for('signup') }}" class="btn btn-gemini">
+                <span class="material-symbols-outlined">person_add</span>
+                Get started
+            </a>
+        </div>
+    </div>
+
+    <section class="hero fade-in">
+        <div class="hero-badge">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            UITM · AI-powered course matching
+        </div>
+        <h1>Find your perfect <span class="gradient-text">UITM course match</span></h1>
+        <p>Personalized recommendations for Universiti Teknologi MARA — browse courses by faculty, enroll up to 24 credit hours, and auto-generate your semester timetable.</p>
+        <div class="hero-actions">
+            <a href="{{ url_for('signup') }}" class="btn btn-gemini">
+                <span class="material-symbols-outlined">rocket_launch</span>
+                Create free account
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Sign in</a>
+        </div>
+    </section>
+
+    <div class="feature-grid">
+        <div class="card feature-item card-interactive fade-in stagger-1">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">tune</span>
+            </div>
+            <h3>Preference-based</h3>
+            <p>Set your field, difficulty, duration, and interests for truly personal suggestions.</p>
+        </div>
+        <div class="card feature-item card-interactive fade-in stagger-2">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">rule</span>
+            </div>
+            <h3>Rule-based filtering</h3>
+            <p>Seven smart rules score and rank every course against your unique learning profile.</p>
+        </div>
+        <div class="card feature-item card-interactive fade-in stagger-3">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">insights</span>
+            </div>
+            <h3>Transparent scoring</h3>
+            <p>See match percentages and clear reasons behind every recommendation.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

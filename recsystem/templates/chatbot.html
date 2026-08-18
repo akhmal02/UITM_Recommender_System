@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "macros.html" import brand %}
+{% block title %}AI Assistant{% endblock %}
+
+{% block body %}
+<div class="page-wrapper chat-page">
+    <div class="top-bar">{{ brand() }}</div>
+
+    <div class="section-header">
+        <div>
+            <h2>AI Assistant</h2>
+            <p>Free chat — ask anything, like ChatGPT</p>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="chat-clear">
+            <span class="material-symbols-outlined">delete</span>
+            Clear chat
+        </button>
+    </div>
+
+    <div class="chat-layout card">
+        <div class="chat-header">
+            <div class="chat-avatar-bot">
+                <span class="material-symbols-outlined">smart_toy</span>
+            </div>
+            <div>
+                <strong>UITM CourseRec AI</strong>
+                <span>Powered by AI · remembers conversation · knows your enrollments</span>
+            </div>
+        </div>
+
+        <div id="chat-messages" class="chat-messages">
+            <div class="chat-bubble bot">
+                <span class="material-symbols-outlined bubble-icon">auto_awesome</span>
+                <div class="bubble-content">
+                    Hi {{ current_user.full_name.split()[0] }}! I'm your **AI assistant** — ask me
+                    <strong>anything</strong>: UITM, courses, study tips, career advice, homework, or casual chat.
+                </div>
+            </div>
+        </div>
+
+        <div id="chat-suggestions" class="chat-suggestions">
+            <button type="button" class="suggestion-chip" data-msg="What is UITM?">What is UITM?</button>
+            <button type="button" class="suggestion-chip" data-msg="Help me choose courses">Help me choose courses</button>
+            <button type="button" class="suggestion-chip" data-msg="What are my enrollments?">My enrollments</button>
+            <button type="button" class="suggestion-chip" data-msg="Tips for exam preparation">Exam tips</button>
+        </div>
+
+        <form id="chat-form" class="chat-input-area">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Ask anything..." autocomplete="off" maxlength="800">
+            <button type="submit" class="btn btn-gemini btn-sm" id="chat-send">
+                <span class="material-symbols-outlined">send</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+{% endblock %}

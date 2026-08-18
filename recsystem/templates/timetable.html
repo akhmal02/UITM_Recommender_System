@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% from "macros.html" import brand %}
+{% block title %}Timetable{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="top-bar">{{ brand() }}</div>
+
+    <div class="section-header">
+        <div>
+            <h2>Semester timetable</h2>
+            <p>Auto-generated from your enrolled courses · {{ timetable.total_credits }}/{{ max_semester_credits }} credit hours</p>
+        </div>
+        <a href="{{ url_for('courses') }}" class="btn btn-tonal btn-sm">
+            <span class="material-symbols-outlined">menu_book</span>
+            Browse courses
+        </a>
+    </div>
+
+    {% if timetable.clashes %}
+    <div class="clash-alert">
+        <span class="material-symbols-outlined">warning</span>
+        <div>
+            <strong>Schedule clash detected</strong>
+            {% for clash in timetable.clashes %}
+            <p>{{ clash.day }} {{ clash.time }}: {{ clash.course_a }} overlaps with {{ clash.course_b }}</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if timetable.enrollments %}
+    <div class="timetable-wrap card">
+        <table class="timetable-grid">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    {% for day in timetable.days %}
+                    <th>{{ day[:3] }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot_start, slot_end in timetable.slots %}
+                {% set slot_key = slot_start ~ '-' ~ slot_end %}
+                <tr>
+                    <td class="time-col">{{ slot_start }}–{{ slot_end }}</td>
+                    {% for day in timetable.days %}
+                    <td class="slot-cell">
+                        {% for item in timetable.grid[day][slot_key] %}
+                        <div class="timetable-block">
+                            <span class="tb-code">{{ item.code }}</span>
+                            <span class="tb-title">{{ item.title }}</span>
+                            <span class="tb-meta">{{ item.session_type }} · {{ item.venue }}</span>
+                            <span class="tb-lecturer">{{ item.instructor }}</span>
+                        </div>
+                        {% endfor %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-header" style="margin-top: 28px;">
+        <h2>Enrolled courses</h2>
+    </div>
+    <div class="grid-3">
+        {% for course in timetable.enrollments %}
+        <div class="card course-card">
+            <span class="course-code">{{ course.code }}</span>
+            <h3>{{ course.title }}</h3>
+            <div class="course-meta">
+                <span class="tag">{{ course.credits }} cr</span>
+                <span class="tag">{{ course.faculty }}</span>
+            </div>
+            <div class="instructor-line">
+                <span class="material-symbols-outlined">person</span>
+                {{ course.instructor }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card empty-state">
+        <div class="empty-icon-wrap">
+            <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+        <h3>No timetable yet</h3>
+        <p>Enroll in courses to generate your weekly UITM timetable automatically.</p>
+        <a href="{{ url_for('courses') }}" class="btn btn-gemini mt-md">
+            <span class="material-symbols-outlined">menu_book</span>
+            Browse courses by faculty
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

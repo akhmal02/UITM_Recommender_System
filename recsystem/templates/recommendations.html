@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% from "macros.html" import brand %}
+{% block title %}Recommendations{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="top-bar">{{ brand() }}</div>
+
+    <div class="section-header">
+        <div>
+            <h2>Recommended for you</h2>
+            <p>{{ recommendations|length }} matched · {{ uitm_faculties.get(prefs.faculty, prefs.faculty) }} · {{ prefs.difficulty_level }}</p>
+        </div>
+        <a href="{{ url_for('preferences') }}" class="btn btn-tonal btn-sm">
+            <span class="material-symbols-outlined">tune</span>
+            Adjust
+        </a>
+    </div>
+
+    {% if recommendations %}
+    <div class="grid-2">
+        {% for course in recommendations %}
+        <div class="card course-card card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                <span class="course-code">{{ course.code }}</span>
+                <span class="tag tag-gemini">
+                    <span class="material-symbols-outlined">auto_awesome</span>
+                    {{ course.match_percent }}% match
+                </span>
+            </div>
+            <h3>{{ course.title }}</h3>
+            <p>{{ course.description }}</p>
+            <div class="course-meta">
+                <span class="tag">{{ course.difficulty }}</span>
+                <span class="tag">{{ course.format }}</span>
+                <span class="tag">{{ course.duration_weeks }} weeks</span>
+                <span class="tag">{{ course.credits }} cr</span>
+                <span class="tag">
+                    <span class="material-symbols-outlined">star</span>
+                    {{ course.rating }}
+                </span>
+            </div>
+            <div class="match-bar">
+                <div class="match-bar-header">
+                    <span>Match score</span>
+                    <strong>{{ course.match_score }} pts</strong>
+                </div>
+                <div class="match-track">
+                    <div class="match-fill" data-width="{{ course.match_percent }}%" style="width: {{ course.match_percent }}%;"></div>
+                </div>
+            </div>
+            <ul class="reasons-list">
+                {% for reason in course.reasons[:4] %}
+                <li>
+                    <span class="material-symbols-outlined">check_circle</span>
+                    {{ reason }}
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="flex-gap mt-md">
+                <form method="POST" action="{{ url_for('enroll', course_id=course.id) }}">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        Enroll
+                    </button>
+                </form>
+            </div>
+            <div class="instructor-line">
+                <span class="material-symbols-outlined">person</span>
+                {{ course.instructor }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card empty-state">
+        <div class="empty-icon-wrap">
+            <span class="material-symbols-outlined">inbox</span>
+        </div>
+        <h3>No recommendations found</h3>
+        <p>Try broadening your preferences — select "Any" format or adjust your field.</p>
+        <a href="{{ url_for('preferences') }}" class="btn btn-gemini mt-md">
+            <span class="material-symbols-outlined">tune</span>
+            Update preferences
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

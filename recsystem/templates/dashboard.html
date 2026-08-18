@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% from "macros.html" import brand %}
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="top-bar">
+        {{ brand() }}
+        <div class="top-actions">
+            <div class="greeting-chip">
+                <span class="material-symbols-outlined" style="font-size:18px;">waving_hand</span>
+                Hello, <strong>{{ current_user.full_name.split()[0] }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <div>
+            <h2>Dashboard</h2>
+            <p>UITM · {{ uitm_faculties.get(prefs.faculty, prefs.faculty) }}</p>
+        </div>
+        <a href="{{ url_for('preferences') }}" class="btn btn-tonal btn-sm">
+            <span class="material-symbols-outlined">tune</span>
+            Edit preferences
+        </a>
+    </div>
+
+    <div class="grid-4 mb-lg">
+        <div class="card stat-card card-interactive">
+            <div class="stat-icon-wrap">
+                <span class="material-symbols-outlined">menu_book</span>
+            </div>
+            <div class="stat-value">{{ stats.faculty_courses }}</div>
+            <div class="stat-label">Courses in your faculty</div>
+        </div>
+        <div class="card stat-card card-interactive">
+            <div class="stat-icon-wrap">
+                <span class="material-symbols-outlined">auto_awesome</span>
+            </div>
+            <div class="stat-value">{{ stats.recommendation_count }}</div>
+            <div class="stat-label">Matched for you</div>
+        </div>
+        <div class="card stat-card card-interactive">
+            <div class="stat-icon-wrap">
+                <span class="material-symbols-outlined">school</span>
+            </div>
+            <div class="stat-value">{{ stats.enrolled_count }}</div>
+            <div class="stat-label">Enrolled</div>
+        </div>
+        <div class="card stat-card card-interactive">
+            <div class="stat-icon-wrap">
+                <span class="material-symbols-outlined">schedule</span>
+            </div>
+            <div class="stat-value">{{ stats.enrolled_credits }}/{{ stats.max_credits }}</div>
+            <div class="stat-label">Credit hours used</div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <div>
+            <h2>Top recommendations</h2>
+            <p>{{ prefs.faculty }} · {{ prefs.difficulty_level }} · {{ stats.remaining_credits }} cr remaining</p>
+        </div>
+        <a href="{{ url_for('recommendations') }}" class="btn btn-gemini btn-sm">
+            <span class="material-symbols-outlined">arrow_forward</span>
+            View all
+        </a>
+    </div>
+
+    {% if recommendations %}
+    <div class="grid-2 mb-lg">
+        {% for course in recommendations %}
+        <div class="card course-card card-interactive">
+            <span class="course-code">{{ course.code }}</span>
+            <h3>{{ course.title }}</h3>
+            <p>{{ course.description }}</p>
+            <div class="course-meta">
+                <span class="tag">{{ course.difficulty }}</span>
+                <span class="tag">{{ course.format }}</span>
+                <span class="tag">{{ course.credits }} credits</span>
+            </div>
+            <div class="match-bar">
+                <div class="match-bar-header">
+                    <span>Match score</span>
+                    <strong>{{ course.match_percent }}%</strong>
+                </div>
+                <div class="match-track">
+                    <div class="match-fill" data-width="{{ course.match_percent }}%" style="width: {{ course.match_percent }}%;"></div>
+                </div>
+            </div>
+            <form method="POST" action="{{ url_for('enroll', course_id=course.id) }}" class="mt-md">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    Enroll
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card empty-state mb-lg">
+        <div class="empty-icon-wrap">
+            <span class="material-symbols-outlined">search</span>
+        </div>
+        <h3>No matches yet</h3>
+        <p>Update your preferences to get personalized recommendations.</p>
+        <a href="{{ url_for('preferences') }}" class="btn btn-gemini mt-md">
+            <span class="material-symbols-outlined">tune</span>
+            Set preferences
+        </a>
+    </div>
+    {% endif %}
+
+    {% if enrollments %}
+    <div class="section-header">
+        <h2>Recent enrollments</h2>
+    </div>
+    <div class="grid-3">
+        {% for course in enrollments %}
+        <div class="card course-card">
+            <span class="course-code">{{ course.code }}</span>
+            <h3>{{ course.title }}</h3>
+            <div class="course-meta">
+                <span class="tag tag-success">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    Enrolled
+                </span>
+                <span class="tag">{{ course.instructor }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% from "macros.html" import brand %}
+{% block title %}UITM Courses{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="top-bar">{{ brand() }}</div>
+
+    <div class="section-header">
+        <div>
+            <h2>UITM course catalog</h2>
+            <p>{{ total_shown }} course(s) · {{ enrolled_credits }}/{{ max_semester_credits }} credit hours enrolled</p>
+        </div>
+        <a href="{{ url_for('timetable') }}" class="btn btn-tonal btn-sm">
+            <span class="material-symbols-outlined">calendar_month</span>
+            Timetable
+        </a>
+    </div>
+
+    <div class="credit-banner">
+        <span class="material-symbols-outlined">schedule</span>
+        <div>
+            <strong>UITM semester limit: {{ max_semester_credits }} credit hours</strong>
+            <span>{{ remaining_credits }} credit hour(s) remaining this semester</span>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <select id="filter-faculty" class="filter-chip" onchange="filterCourses()">
+            <option value="all" {% if not selected_faculty %}selected{% endif %}>All faculties</option>
+            {% for code, name in uitm_faculties.items() %}
+            <option value="{{ code }}" {% if selected_faculty == code %}selected{% endif %}>{{ code }} — {{ name }}</option>
+            {% endfor %}
+        </select>
+        <select id="filter-difficulty" class="filter-chip" onchange="filterCourses()">
+            <option value="">All levels</option>
+            {% for level in ['Beginner', 'Intermediate', 'Advanced'] %}
+            <option value="{{ level }}" {% if selected_difficulty == level %}selected{% endif %}>{{ level }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if grouped_courses %}
+    {% for fac_code, fac_courses in grouped_courses.items() %}
+    <section class="faculty-section">
+        <div class="faculty-header">
+            <span class="faculty-badge">{{ fac_code }}</span>
+            <div>
+                <h3>{{ uitm_faculties.get(fac_code, fac_code) }}</h3>
+                <p>{{ fac_courses|length }} course(s)</p>
+            </div>
+        </div>
+        <div class="grid-3">
+            {% for course in fac_courses %}
+            <div class="card course-card card-interactive">
+                <span class="course-code">{{ course.code }}</span>
+                <h3>{{ course.title }}</h3>
+                <p>{{ course.description }}</p>
+                <div class="course-meta">
+                    <span class="tag">{{ course.credits }} cr</span>
+                    <span class="tag">{{ course.difficulty }}</span>
+                    <span class="tag">{{ course.format }}</span>
+                    <span class="tag">{{ course.duration_weeks }} weeks</span>
+                    <span class="tag">
+                        <span class="material-symbols-outlined">star</span>
+                        {{ course.rating }}
+                    </span>
+                </div>
+                <div class="instructor-line">
+                    <span class="material-symbols-outlined">person</span>
+                    {{ course.instructor }}
+                </div>
+                {% if course.id in enrolled_ids %}
+                <span class="tag tag-success mt-md">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    Enrolled
+                </span>
+                {% elif course.credits > remaining_credits %}
+                <span class="tag mt-md" style="background: var(--warning-bg); color: var(--warning);">
+                    Exceeds credit limit
+                </span>
+                {% else %}
+                <form method="POST" action="{{ url_for('enroll', course_id=course.id) }}" class="mt-md">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        Enroll ({{ course.credits }} cr)
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+    {% else %}
+    <div class="card empty-state">
+        <div class="empty-icon-wrap">
+            <span class="material-symbols-outlined">menu_book</span>
+        </div>
+        <h3>No courses match your filters</h3>
+        <p>Try selecting a different faculty or removing filters.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

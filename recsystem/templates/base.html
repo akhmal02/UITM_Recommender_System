@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CourseRec{% endblock %} | UITM Course Recommendations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400;6..144,500;6..144,600;6..144,700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="ai-bg">
+        <div class="ai-orb ai-orb-1"></div>
+        <div class="ai-orb ai-orb-2"></div>
+        <div class="ai-orb ai-orb-3"></div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">
+            <span class="material-symbols-outlined flash-icon">
+                {% if category == 'success' %}check_circle{% elif category == 'error' %}error{% else %}info{% endif %}
+            </span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block body %}{% endblock %}
+
+    {% if current_user and request.endpoint != 'chatbot_page' %}
+    <a href="{{ url_for('chatbot_page') }}" class="chat-fab" title="AI Assistant">
+        <span class="material-symbols-outlined">smart_toy</span>
+    </a>
+    {% endif %}
+
+    {% if current_user %}
+    <nav class="dock" aria-label="Main navigation">
+        <a href="{{ url_for('dashboard') }}" class="dock-item {% if request.endpoint == 'dashboard' %}active{% endif %}" title="Home">
+            <span class="material-symbols-outlined dock-icon">home</span>
+            <span class="dock-label">Home</span>
+        </a>
+        <a href="{{ url_for('recommendations') }}" class="dock-item {% if request.endpoint == 'recommendations' %}active{% endif %}" title="Recommendations">
+            <span class="material-symbols-outlined dock-icon">auto_awesome</span>
+            <span class="dock-label">For you</span>
+        </a>
+        <a href="{{ url_for('courses') }}" class="dock-item {% if request.endpoint == 'courses' %}active{% endif %}" title="Courses">
+            <span class="material-symbols-outlined dock-icon">menu_book</span>
+            <span class="dock-label">Courses</span>
+        </a>
+        <a href="{{ url_for('chatbot_page') }}" class="dock-item {% if request.endpoint == 'chatbot_page' %}active{% endif %}" title="AI Assistant">
+            <span class="material-symbols-outlined dock-icon">smart_toy</span>
+            <span class="dock-label">Assistant</span>
+        </a>
+        <a href="{{ url_for('timetable') }}" class="dock-item {% if request.endpoint == 'timetable' %}active{% endif %}" title="Timetable">
+            <span class="material-symbols-outlined dock-icon">calendar_month</span>
+            <span class="dock-label">Schedule</span>
+        </a>
+        <a href="{{ url_for('preferences') }}" class="dock-item {% if request.endpoint == 'preferences' %}active{% endif %}" title="Preferences">
+            <span class="material-symbols-outlined dock-icon">tune</span>
+            <span class="dock-label">Tune</span>
+        </a>
+        <div class="dock-divider"></div>
+        <a href="{{ url_for('profile') }}" class="dock-item {% if request.endpoint == 'profile' %}active{% endif %}" title="Profile">
+            <span class="material-symbols-outlined dock-icon">person</span>
+            <span class="dock-label">You</span>
+        </a>
+        <a href="{{ url_for('logout') }}" class="dock-item dock-item-muted" title="Logout">
+            <span class="material-symbols-outlined dock-icon">logout</span>
+            <span class="dock-label">Exit</span>
+        </a>
+    </nav>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

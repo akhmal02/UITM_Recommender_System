@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% from "macros.html" import brand %}
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="top-bar">{{ brand() }}</div>
+
+    <div class="card mb-lg">
+        <div class="profile-header">
+            <div class="avatar">{{ user.full_name[0]|upper }}</div>
+            <div class="profile-info">
+                <h1>{{ user.full_name }}</h1>
+                <p>{{ user.email }}</p>
+                <p style="font-size: .8125rem; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                    <span class="material-symbols-outlined" style="font-size:16px;">calendar_today</span>
+                    Member since {{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'N/A' }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">
+                <span class="material-symbols-outlined">tune</span>
+                Current preferences
+            </div>
+            <div class="pref-row">
+                <span class="material-symbols-outlined">account_balance</span>
+                <div>
+                    <div class="pref-row-label">UITM faculty</div>
+                    <div class="pref-row-value">{{ prefs.faculty }} — {{ uitm_faculties.get(prefs.faculty, '') }}</div>
+                </div>
+            </div>
+            <div class="pref-row">
+                <span class="material-symbols-outlined">schedule</span>
+                <div>
+                    <div class="pref-row-label">Credit hours</div>
+                    <div class="pref-row-value">{{ enrolled_credits }}/{{ max_semester_credits }} hours enrolled</div>
+                </div>
+            </div>
+            <div class="pref-row">
+                <span class="material-symbols-outlined">trending_up</span>
+                <div>
+                    <div class="pref-row-label">Skill level</div>
+                    <div class="pref-row-value">{{ prefs.difficulty_level }}</div>
+                </div>
+            </div>
+            <div class="pref-row">
+                <span class="material-symbols-outlined">schedule</span>
+                <div>
+                    <div class="pref-row-label">Duration</div>
+                    <div class="pref-row-value">{{ prefs.duration_preference }}</div>
+                </div>
+            </div>
+            <div class="pref-row">
+                <span class="material-symbols-outlined">devices</span>
+                <div>
+                    <div class="pref-row-label">Format</div>
+                    <div class="pref-row-value">{{ prefs.format_preference }}</div>
+                </div>
+            </div>
+            <div class="pref-row">
+                <span class="material-symbols-outlined">label</span>
+                <div>
+                    <div class="pref-row-label">Interests</div>
+                    <div class="pref-row-value">{{ prefs.interests or 'None set' }}</div>
+                </div>
+            </div>
+            <a href="{{ url_for('preferences') }}" class="btn btn-tonal btn-sm mt-md">
+                <span class="material-symbols-outlined">edit</span>
+                Edit preferences
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="material-symbols-outlined">school</span>
+                My enrollments ({{ enrollments|length }})
+            </div>
+            {% if enrollments %}
+            <div style="display: grid; gap: 10px;">
+                {% for course in enrollments %}
+                <div class="enrollment-item">
+                    <span class="course-code">{{ course.code }}</span>
+                    <div style="font-weight: 500; margin-top: 4px;">{{ course.title }}</div>
+                    <div class="instructor-line">
+                        <span class="material-symbols-outlined">person</span>
+                        {{ course.instructor }} · {{ course.credits }} credits
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding: 24px;">
+                <p>No enrollments yet. Browse recommendations to get started!</p>
+                <a href="{{ url_for('recommendations') }}" class="btn btn-gemini btn-sm mt-md">
+                    <span class="material-symbols-outlined">auto_awesome</span>
+                    View recommendations
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
