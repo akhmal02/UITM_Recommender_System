@@ -1,0 +1,22 @@
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Environment files
+config.env
+recsystem/config.env
+.env
+*.env
+!.env.example
+!config.env.example
+!recsystem/config.env.example
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
